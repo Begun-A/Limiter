@@ -9,7 +9,7 @@ from handlers import count_timeout
 
 ACCURACY = 2
 GEN_TIME = 0.5  # generation time page
-RATE_LIMIT = 2
+RATE_LIMIT = 1
 
 
 class TestAlgorithmCountTimeOutFunction(TestCase):
@@ -17,7 +17,6 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
 
     def setUp(self):
         from handlers import DOMENS
-
         DOMENS.clear()
 
     def test_requests_at_the_same_time(self):
@@ -77,5 +76,5 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
         self.assertEqual(round(timeout1, ACCURACY), 0)
         self.assertEqual(round(timeout2, ACCURACY), 4)
         self.assertEqual(round(timeout3, ACCURACY), 7)
-        self.assertEqual(round(timeout4, 1), 3)
-        self.assertEqual(round(timeout5, 1), 1)
+        self.assertEqual(round(timeout4, ACCURACY), 3)
+        self.assertEqual(round(timeout5, ACCURACY), 1)
