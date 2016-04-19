@@ -7,9 +7,9 @@ sys.path.append(os.path.join(APP_ROOT))
 
 from handlers import count_timeout
 
-ACCURACY = 2
+ACCURACY = 1
 GEN_TIME = 0.5  # generation time page
-RATE_LIMIT = 1
+RATE_LIMIT = 2
 
 
 class TestAlgorithmCountTimeOutFunction(TestCase):
@@ -17,6 +17,7 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
 
     def setUp(self):
         from handlers import DOMENS
+
         DOMENS.clear()
 
     def test_requests_at_the_same_time(self):
@@ -78,3 +79,12 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
         self.assertEqual(round(timeout3, ACCURACY), 7)
         self.assertEqual(round(timeout4, ACCURACY), 3)
         self.assertEqual(round(timeout5, ACCURACY), 1)
+
+
+    # #Uncomment code below if you want testing limit crawlers timeout.
+    # def test_crush(self):
+    #     for i in range(6):
+    #         timeout = count_timeout('domen', GEN_TIME, RATE_LIMIT)
+    #         if i == 5:
+    #             self.assertEqual(timeout,
+    #                              'Too many requests per second or pages generation very slow')

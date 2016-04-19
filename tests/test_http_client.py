@@ -28,17 +28,15 @@ class HttpClientTest(TestHandlerBase):
 
     @gen_test
     def test_tree_requests_at_the_same_time(self):
-        data1 = json.dumps(dict(domen='domen1', time=0.5))
-        data2 = json.dumps(dict(domen='domen2', time=0.5))
+        url1 = r'/timeout?domen=domen1&time=0.5'
+        url2 = r'/timeout?domen=domen2&time=0.5'
 
-        request1 = HTTPRequest(url=self.get_url(r'/timeout'),
-                               method='POST', body=data1)
-        request2 = HTTPRequest(url=self.get_url(r'/timeout'),
-                               method='POST', body=data2)
+        request1 = HTTPRequest(url=self.get_url(url1), method='GET')
+        request2 = HTTPRequest(url=self.get_url(url2), method='GET')
         for i in range(3):
             response = yield self.http_client.fetch(request1)
-            timeout = round(json_decode(response.body)['time_out'], ACCURACY)
+            timeout = round(json_decode(response.body)['timeout'], ACCURACY)
             self.assertEqual(timeout, i * 2)
             response = yield self.http_client.fetch(request2)
-            timeout = round(json_decode(response.body)['time_out'], ACCURACY)
+            timeout = round(json_decode(response.body)['timeout'], ACCURACY)
             self.assertEqual(timeout, i * 2)
