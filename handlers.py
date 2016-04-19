@@ -6,7 +6,8 @@ import tornado.ioloop
 DOMENS = {}
 SECONDS = 10.0
 REQUESTS = 5.0
-RATE_LIMIT = SECONDS/REQUESTS
+RATE_LIMIT = SECONDS / REQUESTS
+
 
 class TimeOutHandler(tornado.web.RequestHandler):
     def post(self):
@@ -19,31 +20,34 @@ class TimeOutHandler(tornado.web.RequestHandler):
         response = {'time_out': time_out}
         return self.write(response)
 
-def count_timeout(domen, gen_time, step_timeout):
 
-    if domen in DOMENS: # check domen in DOMENS dict
-        last_call = DOMENS.get(domen)
-        elapsed = datetime.now() - last_call # interval between now and last call which has been executed (+) or will be executed(-)
-        elapsed = elapsed.total_seconds()
-        if elapsed <= 0 and step_timeout <= gen_time: # last call wasn't made
-            time_out = gen_time - elapsed # timeout consists of generation time and the remaining time before last call
-            DOMENS[domen] = last_call + timedelta(seconds=gen_time)# set last call time
+def count_timeout(domen, gen_time, rate_limit):
+    """ The function count timeout for crawler.
+        Timeout depends on greater value, page generation time or rate limit (step timeout requests)
+        Also depends on last request time.
+    """
+    if domen in DOMENS:  # check domen in DOMENS dict
+        last_request = DOMENS.get(domen)
+        time_interval = datetime.now() - last_request  # interval between now and last request time which display how many time left befor last request(-)
+        # or how many time elapsed after last request (+)
+        time_interval = time_interval.total_seconds()
+        if gen_time >= rate_limit and (
+                        time_interval <= 0 or gen_time > time_interval > 0):    # generation time greater than rate limit and
+                                                                                # last request wasn't made (time_interval(-))
+                                                                                # or  last request made but can't make request now (time_interval(+))
+            time_out = gen_time - time_interval  # timeout equel generation time without time_interval(+) time or with time_interval(-)
+            DOMENS[domen] = last_request + timedelta(seconds=gen_time) # set last request time
             return time_out
-        if elapsed <= 0 and step_timeout > gen_time: # last call wasn't made
-            time_out = step_timeout - elapsed # timeout consists of step timeout  and the remaining time before last call
-            DOMENS[domen] = last_call + timedelta(seconds=step_timeout)
-            return time_out
-        if gen_time >= step_timeout and gen_time > elapsed > 0: # last call made  and elapsed time less than page generation time
-            time_out = gen_time - elapsed # timeout equel generation time without elapsed time
-            DOMENS[domen] = last_call + timedelta(seconds=gen_time)
-            return time_out
-        if  step_timeout > gen_time and step_timeout > elapsed > 0: #last call made  and elapsed time less than step timeout
-            time_out = step_timeout - elapsed # timeout equal step timeout without elapsed time
-            DOMENS[domen] = last_call + timedelta(seconds=step_timeout)
+        if rate_limit > gen_time and (
+                        time_interval <= 0 or rate_limit > time_interval > 0):  # generation time less than rate limit,
+                                                                                # last request wasn't made (time_interval(-))
+                                                                                # or  last call made but can't make request now (time_interval(+))
+            time_out = rate_limit - time_interval  # timeout equal rate limit without time_interval(+) or with time_interval(-)
+            DOMENS[domen] = last_request + timedelta(seconds=rate_limit) # set last request time
             return time_out
 
-        DOMENS[domen] = datetime.now()
-        return 0
+        DOMENS[domen] = datetime.now()  # set last request time
+        return 0 # crawler can make request now
     else:
-        DOMENS[domen] = datetime.now() #  set last call time to the new domen
-        return 0
+        DOMENS[domen] = datetime.now()  # set last request time to the new domen
+        return 0 # crawler can make request now
