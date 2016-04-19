@@ -24,8 +24,8 @@ class HttpClientTest(TestHandlerBase):
     def setUp(self):
         super(HttpClientTest, self).setUp()
         self.headers = {'Content-Type': 'application/json; charset=UTF-8'}
-        data1 = json.dumps(dict(domen='domen1', time=10))
-        data2 = json.dumps(dict(domen='domen2', time=10))
+        data1 = json.dumps(dict(domen='domen1', time=0.5))
+        data2 = json.dumps(dict(domen='domen2', time=0.5))
 
         self.request1 = HTTPRequest(url=self.get_url(r'/timeout'),
                                     method='POST', body=data1)
