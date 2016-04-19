@@ -10,4 +10,6 @@ use variables `REQUESTS` and `SECONDS` in `handler.py`
 `python app.py` in terminal.  
   
 To get timeout for 'domen_name' with page genertion time 5 seconds:    
-`localhost:8888/timeout?domen=domen_name&time=5` in your browser. 
+`localhost:8888/timeout?domen=domen_name&time=5` in your browser.
+
+To testing app `python tests/runtests.py`

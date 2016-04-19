@@ -9,7 +9,7 @@ REQUESTS = 5.0
 RATE_LIMIT = SECONDS / REQUESTS
 
 
-class TimeOutHandler(tornado.web.RequestHandler):
+class TimeoutHandler(tornado.web.RequestHandler):
     def get(self):
         """
         Calculate and return timeout for crawler

@@ -1,11 +1,11 @@
 import tornado.web
 import tornado.ioloop
 
-from handlers import TimeOutHandler
+from handlers import TimeoutHandler
 
 application = tornado.web.Application(
     handlers=[
-        (r"/timeout", TimeOutHandler),
+        (r"/timeout", TimeoutHandler),
     ]
 )
 
