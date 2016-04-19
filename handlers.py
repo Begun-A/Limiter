@@ -25,27 +25,25 @@ def count_timeout(domen, gen_time, step_timeout):
         last_call = DOMENS.get(domen)
         elapsed = datetime.now() - last_call # interval between now and last call which has been executed (+) or will be executed(-)
         elapsed = elapsed.total_seconds()
-        if elapsed < 0: # last call wasn't made
-            if step_timeout < gen_time: # if page generation time greatest than step timeout then timeout use gen_time, else step_timeout
-                time_out = gen_time - elapsed # timeout consists of generation time and the remaining time before last call
-                DOMENS[domen] = last_call + timedelta(seconds=gen_time)# set last call time
-                return time_out
-            else:
-                time_out = step_timeout - elapsed # timeout consists of step timeout  and the remaining time before last call
-                DOMENS[domen] = last_call + timedelta(seconds=step_timeout)
-                return time_out
-        elif step_timeout > elapsed > 0 or gen_time > elapsed > 0: # last call made  and elapsed less time than step timeout or generation time
-            if step_timeout < gen_time: #if page generation time greatest than step timeout then timeout use gen_time, else step_timeout
-                time_out = gen_time - elapsed # timeout equel generation time without elapsed time
-                DOMENS[domen] = last_call + timedelta(seconds=gen_time)
-                return time_out
-            else:
-                time_out = step_timeout - elapsed # timeout equal step timeout without elapsed time
-                DOMENS[domen] = last_call + timedelta(seconds=step_timeout)
-                return time_out
-        else:
-            DOMENS[domen] = datetime.now()
-            return 0
+        if elapsed <= 0 and step_timeout <= gen_time: # last call wasn't made
+            time_out = gen_time - elapsed # timeout consists of generation time and the remaining time before last call
+            DOMENS[domen] = last_call + timedelta(seconds=gen_time)# set last call time
+            return time_out
+        if elapsed <= 0 and step_timeout > gen_time: # last call wasn't made
+            time_out = step_timeout - elapsed # timeout consists of step timeout  and the remaining time before last call
+            DOMENS[domen] = last_call + timedelta(seconds=step_timeout)
+            return time_out
+        if gen_time >= step_timeout and gen_time > elapsed > 0: # last call made  and elapsed time less than page generation time
+            time_out = gen_time - elapsed # timeout equel generation time without elapsed time
+            DOMENS[domen] = last_call + timedelta(seconds=gen_time)
+            return time_out
+        if  step_timeout > gen_time and step_timeout > elapsed > 0: #last call made  and elapsed time less than step timeout
+            time_out = step_timeout - elapsed # timeout equal step timeout without elapsed time
+            DOMENS[domen] = last_call + timedelta(seconds=step_timeout)
+            return time_out
+
+        DOMENS[domen] = datetime.now()
+        return 0
     else:
         DOMENS[domen] = datetime.now() #  set last call time to the new domen
         return 0
