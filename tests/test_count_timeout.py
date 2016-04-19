@@ -27,7 +27,7 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
             self.assertEqual(round(timeout, ACCURACY), i * RATE_LIMIT)
 
     def test_requests_with_interval(self):
-        """Test count_timeout when requests sent with inteval"""
+        """Test count_timeout when requests sent with interval"""
         timeout1 = count_timeout('domen', GEN_TIME, RATE_LIMIT)
         time.sleep(1)
         timeout2 = count_timeout('domen', GEN_TIME, RATE_LIMIT)
@@ -38,7 +38,9 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
         self.assertEqual(round(timeout3, ACCURACY), 3)
 
     def test_requests_with_interval_more_than_stap(self):
-        """Test count_timeout when requests sent with iterval more than rate limit"""
+        """
+        Test count_timeout when requests sent with interval more than rate limit
+        """
         timeout1 = count_timeout('domen', GEN_TIME, RATE_LIMIT)
         time.sleep(2)
         timeout2 = count_timeout('domen', GEN_TIME, RATE_LIMIT)
@@ -50,7 +52,9 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
         self.assertEqual(round(timeout3, ACCURACY), 1)
 
     def test_when_two_different_domens(self):
-        """Test count_timeout when requests sent with two differenet domens"""
+        """
+        Test count_timeout when requests sent with two different domens
+        """
         timeout1 = count_timeout('domen', GEN_TIME, RATE_LIMIT)
         timeout2 = count_timeout('domen1', GEN_TIME, RATE_LIMIT)
         time.sleep(1)
@@ -64,7 +68,9 @@ class TestAlgorithmCountTimeOutFunction(TestCase):
         self.assertEqual(round(timeout4, ACCURACY), 0)
 
     def test_when_generation_time_page_greater(self):
-        """Test count_timeout when geration time page greater than rate limit"""
+        """
+        Test count_timeout when generation time page greater than rate limit
+        """
         timeout1 = count_timeout('domen', 3, RATE_LIMIT)
         timeout2 = count_timeout('domen', 4, RATE_LIMIT)
         time.sleep(1)
